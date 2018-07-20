@@ -1,6 +1,7 @@
 ---
 layout: post
 title: On 'Looking to the future with Cassandra'
+date: 2018-07-20 16:07:00 +02:00
 ---
 
 {{ page.title }}
