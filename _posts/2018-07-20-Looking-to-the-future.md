@@ -80,12 +80,15 @@ WHERE `itemid` = 13084479
 which both can be implemented as index scans, so, logically, the "ideal" query plan would look like this:
 ```sql
 SELECT `digdate`, `id`
-	FROM `Diggs`
-	WHERE `id` IN (
-			SELECT `id` FROM `Diggs` WHERE `userid` IN (59, 9006, 15989, 16045, 29183, 30220, 62511, 75212, 79006) -- An index-only scan on KEY `user`  (`userid`)
-		INTERSECT
-			SELECT `id` FROM `Diggs` WHERE `itemid` = 13084479 -- An index-only scan on KEY `item` (`itemid`)
-	)
+  FROM `Diggs`
+  WHERE `id` IN (
+     -- An index-only scan on KEY `user`  (`userid`)
+     SELECT `id` FROM `Diggs` WHERE `userid` IN
+       (59, 9006, 15989, 16045, 29183, 30220, 62511, 75212, 79006)
+   INTERSECT
+     -- An index-only scan on KEY `item` (`itemid`)
+     SELECT `id` FROM `Diggs` WHERE `itemid` = 13084479
+  )
 ```
 
 To execute this obvious query plan, MySQL had to create the intersection of two unsorted streams of integers, that are returned by the index-scans.
@@ -94,15 +97,21 @@ I think this is sloq and (almost) impossible to execute for MySQL.
 So instead the query plan will in fact look like this:
 ```sql
 SELECT `digdate`, `id`
-	FROM (SELECT * FROM `Diggs` WHERE `userid` IN (59, 9006, 15989, 16045, 29183, 30220, 62511, 75212, 79006)) AS `Diggs` -- An index scan on KEY `user` (`userid`)
-	WHERE `itemid` = 13084479 -- Perform a linear search on the result set of the index scan.
+  FROM (
+   -- An index scan on KEY `user` (`userid`)
+   SELECT * FROM `Diggs` WHERE `userid` IN
+    (59, 9006, 15989, 16045, 29183, 30220, 62511, 75212, 79006)
+  ) AS `Diggs`
+WHERE `itemid` = 13084479 -- Perform a linear search on the result set of the index scan.
 ;
 ```
 or this:
 ```sql
 SELECT `digdate`, `id`
-	FROM (SELECT * FROM `Diggs` WHERE `itemid` = 13084479) AS `Diggs` -- An index scan on KEY `item` (`itemid`)
-	WHERE `userid` IN (59, 9006, 15989, 16045, 29183, 30220, 62511, 75212, 79006) -- Perform a linear search on the result set of the index scan.
+  -- An index scan on KEY `item` (`itemid`)
+  FROM (SELECT * FROM `Diggs` WHERE `itemid` = 13084479) AS `Diggs`
+  -- Perform a linear search on the result set of the index scan.
+WHERE `userid` IN (59, 9006, 15989, 16045, 29183, 30220, 62511, 75212, 79006)
 ;
 ```
 
