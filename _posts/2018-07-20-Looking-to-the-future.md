@@ -124,6 +124,8 @@ The solution on this problem is to create a new index as follows:
 CREATE INDEX `Diggs_new_index` ON `Diggs` (`userid`,`itemid`);
 ```
 
+The resulting query plan will look like this:
+
 ```sql
 SELECT `digdate`, `id`
 	FROM `Diggs`
@@ -141,6 +143,8 @@ SELECT `digdate`, `id`
 		) -- An index-only scan on INDEX `Diggs_new_index` (`userid`,`itemid`)
 	)
 ```
+
+Of course, it depends on the query planer create a good query plan.
 
 ### What is Cassandra for?
 
