@@ -144,7 +144,9 @@ SELECT `digdate`, `id`
 	)
 ```
 
-Of course, it depends on the query planer create a good query plan.
+Of course, it depends on the query planer create a good query plan. I remember times,
+when i was sitting in front of a database trying out different implementations of a
+specific query until the query plan looked like, what i envisioned it to look like.
 
 ### What is Cassandra for?
 
