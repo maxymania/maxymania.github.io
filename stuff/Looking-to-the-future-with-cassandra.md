@@ -1,3 +1,7 @@
+---
+layout: site
+title: Looking to the future with Cassandra
+---
 # Looking to the future with Cassandra
 
 Digg has been researching ways to scale our database infrastructure for some time now. We’ve adopted a traditional vertically partitioned master-slave configuration with MySQL, and also investigated sharding MySQL with IDDB. Ultimately, these solutions left us wanting. In the case of the traditional architecture, the lack of redundancy on the write masters is painful, and both approaches have significant management overhead to keep running.
