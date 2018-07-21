@@ -6,6 +6,21 @@ date: 2018-07-21 13:45:00 +02:00
 
 # {{ page.title }}
 
+RDBMSes are used in finance industry and similar industries. At the same time RDBMSes and the
+relational model played a role in web developement. I think it was accidentially.
+
+The main use case of RDBMSes remains business data. Think of tables called `customers` or `orders`
+or anything like this. And so, **correctness of the data** is a great concern. Because of this,
+these databases are usually transactional.
+
+Business data is often heavily normalized. The database schemas used for dynamic web pages often mimic
+those databases that store business data, which works but is obviously not always the best solution.
+
+In dynamic websites, the concept of **data correctness** virtually doesn't exist. The mere purpose
+of transactions (if they are used) is to prevent data that causes the displaying PHP script to crash.
+
+In general speaking, data correctness in web applications is a SHOULD-BE, but not a MUST-BE.
+
 ### What is normalization
 
 There is an excellent Article about [Database normalisation on Wikipedia](https://en.wikipedia.org/wiki/Database_normalization).
@@ -29,9 +44,10 @@ most obvious thing to do with an RDBMS.
 
 ### How to really "normalize" your data web applications
 
-**A denormalized Table:**
+**A "denormalized" Table:**
 
 **Table** `Blog_Posts`
+
 id | title | body | category | tag
 --- | - | - | - | -
 1 | A paradox on ... | *...some text...* | Poetry | Paradox
@@ -45,17 +61,20 @@ Everyone will propably agree, that this is a waste of diskspace.
 **The "normalized" solution:**
 
 **Table** `Blog_Posts`
+
 id | title | body
 --- | - | - 
 1 | A paradox on ... | *...some text...*
 
 **Table** `Blog_Post_Categories`
+
 id | category
 --- | -
 1 | Poetry
 1 | Philosophy
 
 **Table** `Blog_Post_Tags`
+
 id | tag
 --- | -
 1 | Paradox
@@ -66,6 +85,7 @@ This is the obvious solution as ruled by the 3NF (I think).
 **My solution:**
 
 **Table** `Blog_Posts`
+
 id | title | body | categories | tags
 --- | - | - | - | -
 1 | A paradox on ... | *...some text...* | {Poetry,Philosophy} | {Paradox,Ideas}
@@ -74,8 +94,8 @@ This example violates even the 1NF (first normal form) by having multiple values
 However modern RDBMS usually have [array types](https://www.postgresql.org/docs/9.5/static/arrays.html).
 And having arrays within fields is not expensive (at least not in PostgreSQL).
 
-Despite not adhering to the normal forms, this example does'nt suffer from the kind of data explodification
-as seen in the "denormalized" example above. Yet, it does'nt suffer from type of segmentation as the "normalized" example.
+Despite not adhering to the normal forms, this example doesn't suffer from the kind of data explodification
+as seen in the "denormalized" example above. Yet, it doesn't suffer from type of segmentation as the "normalized" example.
 
 My solution also improves the data locality and CPU overhead. And, ironically, this solution saves more disk space than seperate tables.
 
