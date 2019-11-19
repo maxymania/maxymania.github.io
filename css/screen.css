@@ -11,6 +11,12 @@
   padding: 0;
 }
 
+/* THIS IS A FIX FOR blockquote */
+.site blockquote {
+    margin-left: 10px;
+    background-color: #FFFFF0;
+}
+
 html, body {
   height: 100%;
 }
