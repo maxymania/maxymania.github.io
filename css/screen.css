@@ -15,6 +15,7 @@
 .site blockquote {
     margin-left: 10px;
     background-color: #FFFFF0;
+    color: #555;
 }
 
 html, body {
